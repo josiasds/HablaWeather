@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import Main from './app/index';
 
-AppRegistry.registerComponent('HablaWeather', () => App);
+AppRegistry.registerComponent('HablaWeather', () => Main);

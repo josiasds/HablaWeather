@@ -1,16 +1,27 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Image, StatusBar} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  Keyboard,
+  KeyboardAvoidingView,
+  Image,
+  StatusBar,
+} from 'react-native';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
+import Weather from '../components/Weather';
+import Locations from '../components/Locations';
+import AddLocation from '../components/AddLocation';
 import actionCreators from '../actions';
 import bgImage from '../assets/bg.jpg';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 20,
   },
   fullBackground: {
     position: 'absolute',
@@ -19,13 +30,15 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-  dataContainer: {
-    backgroundColor: 'transparent',
-  },
-  data: {
-    color: 'white',
-    fontSize: 30,
-    marginBottom: 10,
+  loading: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 
@@ -34,34 +47,35 @@ class App extends Component<{}> {
     this.props.fetchWeather('Rio de Janeiro');
   }
 
+  onAddLocation = location => {
+    this.props.fetchWeather(location);
+    Keyboard.dismiss();
+  };
+
   render() {
-    const {data, isLoading} = this.props;
+    const {locations, isLoading} = this.props;
 
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
         <StatusBar barStyle="light-content" />
         <View style={styles.fullBackground}>
           <Image style={styles.backgroundImage} source={bgImage} />
         </View>
-        <View style={styles.dataContainer}>
-          {data ? (
-            <View>
-              <Text style={styles.data}>{data.name}</Text>
-              <Text style={styles.data}>{data.main.temp}</Text>
-              <Text style={styles.data}>{data.weather[0].main}</Text>
-            </View>
-          ) : (
-            <Text style={styles.data}>{isLoading ? 'Loading...' : 'No data'}</Text>
-          )}
-        </View>
-      </View>
+        <Locations locations={locations} />
+        <AddLocation onPress={this.onAddLocation} />
+        {isLoading && (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="white" />
+          </View>
+        )}
+      </KeyboardAvoidingView>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  data: state.currentWeather.data,
   isLoading: state.currentWeather.isLoading,
+  locations: state.locations,
 });
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 

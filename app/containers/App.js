@@ -1,19 +1,12 @@
 import React, {Component} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  Keyboard,
-  KeyboardAvoidingView,
-  Image,
-  StatusBar,
-} from 'react-native';
+import {StyleSheet, View, Keyboard, KeyboardAvoidingView, Image, StatusBar} from 'react-native';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 import Weather from '../components/Weather';
 import Locations from '../components/Locations';
 import AddLocation from '../components/AddLocation';
+import Loading from '../components/Loading';
 import actionCreators from '../actions';
 import bgImage from '../assets/bg.jpg';
 
@@ -30,16 +23,6 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-  loading: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
 });
 
 class App extends Component<{}> {
@@ -52,6 +35,10 @@ class App extends Component<{}> {
     Keyboard.dismiss();
   };
 
+  onAddCurrentLocation = (latitude, longitude) => {
+    this.props.fetchWeatherByCoords(latitude, longitude);
+  };
+
   render() {
     const {locations, isLoading} = this.props;
 
@@ -62,12 +49,11 @@ class App extends Component<{}> {
           <Image style={styles.backgroundImage} source={bgImage} />
         </View>
         <Locations locations={locations} />
-        <AddLocation onPress={this.onAddLocation} />
-        {isLoading && (
-          <View style={styles.loading}>
-            <ActivityIndicator size="large" color="white" />
-          </View>
-        )}
+        <AddLocation
+          onPress={this.onAddLocation}
+          onAddCurrentLocation={this.onAddCurrentLocation}
+        />
+        <Loading isLoading={isLoading} />
       </KeyboardAvoidingView>
     );
   }

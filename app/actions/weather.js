@@ -1,10 +1,20 @@
 import * as types from './types';
-import {buildWeatherURL} from '../lib/api';
+import {buildWeatherURL, buildWeatherCoordsURL} from '../lib/api';
 
 export const fetchWeather = location => (dispatch, getState) => {
   dispatch(fetchWeatherRequest());
   const url = buildWeatherURL(encodeURIComponent(location));
-  console.log(url);
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => dispatch(fetchWeatherSuccess(data)))
+    .catch(error => dispatch(fetchWeatherFailure(error)));
+};
+
+export const fetchWeatherByCoords = (latitude, longitude) => (dispatch, getState) => {
+  dispatch(fetchWeatherRequest());
+  const url = buildWeatherCoordsURL(latitude, longitude);
+
   fetch(url)
     .then(response => response.json())
     .then(data => dispatch(fetchWeatherSuccess(data)))

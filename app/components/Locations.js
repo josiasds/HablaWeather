@@ -1,7 +1,13 @@
 import React from 'react';
-import {FlatList, Text} from 'react-native';
+import {FlatList, Text, StyleSheet} from 'react-native';
 
 import Weather from './Weather';
+
+const styles = StyleSheet.create({
+  list: {
+    marginBottom: 40,
+  },
+});
 
 const Locations = ({locations}) => {
   return (
@@ -9,6 +15,7 @@ const Locations = ({locations}) => {
       data={Object.values(locations)}
       keyExtractor={item => item.id}
       renderItem={({item}) => <Weather data={item} />}
+      style={styles.list}
     />
   );
 };
